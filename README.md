@@ -7,16 +7,13 @@ To write a program to predict the type of species of the Iris flower using the S
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. Load and split the dataset into training and testing sets.
-
-
-2. Load and split the dataset into training and testing sets.
-
-
-3. Train the SGD Classifier using logistic regression loss.
-
-
-4. Predict and evaluate the model using the test data.
+1. Import the required libraries and load the Iris dataset.
+  
+2. Split the dataset into training and testing sets.
+  
+3. Standardize the input features for better model performance.
+ 
+4. Train the SGD classifier and predict the species of the Iris flower.
 
 ## Program:
 ```
@@ -26,44 +23,43 @@ Developed by:Pruthvisri A
 RegisterNumber:25013683
 */
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
+# Import required libraries
+from sklearn.datasets import load_iris
 from sklearn.linear_model import SGDClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-X, y = make_classification(n_samples=1000, n_features=2, n_informative=2, 
-                           n_redundant=0, n_classes=2, random_state=42)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-model = SGDClassifier(loss='log_loss', 
-                      max_iter=1000,   
-                      tol=1e-3,         
-                      random_state=42)
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
-plt.figure(figsize=(8,6))
-plt.scatter(X_test[:, 0], X_test[:, 1], c=y_pred, cmap='coolwarm', edgecolor='k')
-plt.title("Logistic Regression (SGDClassifier) Decision Boundary")
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
-                     np.arange(y_min, y_max, 0.02))
-Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
-Z = Z.reshape(xx.shape)
-plt.contourf(xx, yy, Z, alpha=0.2, cmap='coolwarm')
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
 
-plt.show()
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data          # Features (sepal length, sepal width, petal length, petal width)
+y = iris.target        # Target (species)
+
+# Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Initialize and train the SGD Classifier
+model = SGDClassifier(max_iter=1000, tol=1e-3, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Predict the species for the test data
+y_pred = model.predict(X_test_scaled)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print("Predicted Species:", y_pred)
+print("Accuracy:", accuracy)
+print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=iris.target_names))
 ```
 
 ## Output:
-![alt text](<exp 7.png>)
-![alt text](<exp 7a.png>)
+<img width="826" height="330" alt="{EB84229C-1D7E-4BEC-A36C-26E16F8D8421}" src="https://github.com/user-attachments/assets/fd6f7697-27a8-4ea8-a174-e5e88003b1ef" />
+
 
 
 ## Result:
